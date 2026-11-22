@@ -1,0 +1,41 @@
+# Example: every Monday, re-read the stored technology evidence of your apps and post what changed to Slack or Discord.
+# Disabled until you set the repository variable ENABLE_TECH_WATCH=true.
+# Secrets: PEEKPANDA_TOKEN (PeekPanda API key, required), TECH_WATCH_WEBHOOK_URL (optional).
+# Variables: TECH_APPS (required: comma-separated store IDs, e.g. 571800810,493145008),
+#            PEEKPANDA_TENANCY (optional: a workspace id; leave unset for a key pinned to one workspace).
+# Calls per run: 1 per store ID. Read-only; nothing is collected or refreshed.
+name: tech-watch
+on:
+  schedule:
+    - cron: '0 7 * * 1'
+  workflow_dispatch:
+jobs:
+  watch:
+    if: vars.ENABLE_TECH_WATCH == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - uses: actions/cache/restore@v4
+        with:
+          path: tech-state.json
+          key: tech-watch-state-${{ github.run_id }}
+          restore-keys: tech-watch-state-
+      - name: app tech stack watch
+        env:
+          PEEKPANDA_TOKEN: ${{ secrets.PEEKPANDA_TOKEN }}
+          PEEKPANDA_TENANCY: ${{ vars.PEEKPANDA_TENANCY }}
+          TECH_APPS: ${{ vars.TECH_APPS }}
+          TECH_WATCH_WEBHOOK_URL: ${{ secrets.TECH_WATCH_WEBHOOK_URL }}
+        run: |
+          set -- --apps "$TECH_APPS" --state tech-state.json
+          if [ -n "$PEEKPANDA_TENANCY" ]; then set -- "$@" --tenancy "$PEEKPANDA_TENANCY"; fi
+          if [ -n "$TECH_WATCH_WEBHOOK_URL" ]; then set -- "$@" --webhook "$TECH_WATCH_WEBHOOK_URL"; fi
+          node cli.js "$@" >> "$GITHUB_STEP_SUMMARY"
+      - uses: actions/cache/save@v4
+        if: always()
+        with:
+          path: tech-state.json
+          key: tech-watch-state-${{ github.run_id }}

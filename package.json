@@ -1,0 +1,14 @@
+{
+  "name": "app-tech-stack-watch",
+  "version": "1.0.0",
+  "description": "Read PeekPanda's stored technology evidence for your iOS apps and competitors: SDK evidence by category, SKAdNetwork ID counts and best chart positions over 90 days. Weekly diff, Markdown/CSV/JSON and an optional Slack or Discord post.",
+  "type": "module",
+  "bin": { "app-tech-stack-watch": "cli.js" },
+  "scripts": { "test": "node --test test/" },
+  "engines": { "node": ">=18" },
+  "license": "MIT",
+  "author": "Fekri Darkaoui",
+  "repository": { "type": "git", "url": "https://github.com/fdarkaou/app-tech-stack-watch.git" },
+  "homepage": "https://fdarkaou.github.io/app-tech-stack-watch/",
+  "keywords": ["app-store", "ios", "competitor-research", "competitor-analysis", "sdk", "mcp", "peekpanda"]
+}

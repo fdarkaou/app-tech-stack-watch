@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>App tech stack watch: stored SDK evidence and best chart positions for iOS apps</title>
+<meta name="description" content="Paste PeekPanda technology answers for iOS apps and get a readable report: SDK evidence by category, SKAdNetwork ID counts, best chart positions over 90 days and what changed since an earlier run. Runs in your browser.">
+<style>
+  body { font: 15px/1.5 system-ui, sans-serif; max-width: 1000px; margin: 2rem auto; padding: 0 1rem; color: #1b1b1f; }
+  textarea { width: 100%; min-height: 130px; font: 13px ui-monospace, monospace; }
+  button { padding: .45rem .9rem; margin: .5rem .5rem .5rem 0; cursor: pointer; }
+  table { border-collapse: collapse; width: 100%; margin: .5rem 0; font-size: 13px; }
+  th, td { border-bottom: 1px solid #ddd; padding: .35rem .5rem; text-align: left; vertical-align: top; }
+  .muted { color: #777; } .err { color: #cf222e; white-space: pre-wrap; }
+  .grid { display: grid; grid-template-columns: 2fr 1fr; gap: 1rem; } @media (max-width: 760px) { .grid { grid-template-columns: 1fr; } }
+  label { font-weight: 600; font-size: 14px; }
+  pre { background: #f6f8fa; padding: .75rem; overflow-x: auto; font-size: 13px; }
+  footer { margin-top: 2.5rem; font-size: 13px; color: #555; }
+  a { color: #0969da; }
+</style>
+</head>
+<body>
+<h1>App tech stack watch</h1>
+<p>Which SDKs does an iOS app ship with, and where has it charted? <a href="https://peekpanda.com">PeekPanda</a> stores dated technology evidence per app: SDK names found in the app package grouped by category, plus source-reported best chart positions over a rolling 90 days. Paste the answers for one or more apps and this page lays them out, and given an earlier run, lists what changed. Nothing leaves your browser; this page never calls the API.</p>
+<p class="muted">An advertising-network identifier does not prove active ad buying, and an SDK that is not listed is not proof the app lacks it. Best ranks are not a daily history or a current position.</p>
+<div class="grid">
+  <div><label for="raw">Technology answers</label><textarea id="raw" spellcheck="false" placeholder="The answer of GET /v1/competitors/ios/{storeId}/technology, an array of several, or the file the command-line version saves with --save"></textarea></div>
+  <div><label for="prev">Earlier run (optional)</label><textarea id="prev" spellcheck="false" placeholder="An earlier answer or --save file"></textarea></div>
+</div>
+<div>
+  <button id="go">Build report</button>
+  <button id="ex">Load example data</button>
+  <button id="csv" disabled>Download CSV</button>
+</div>
+<div id="err" class="err"></div>
+<div id="out"></div>
+
+<h2>Where to get the JSON</h2>
+<p>The answer needs a PeekPanda account (scope <code>context:read</code>), counts as one call toward your plan's daily API and MCP allowance, and never starts collection. See <a href="https://peekpanda.com/docs/get-competitor-technology">Get competitor technology</a> and <a href="https://peekpanda.com/docs/plans-and-refreshes">plans and refreshes</a>:</p>
+<pre>curl 'https://api.peekpanda.com/v1/competitors/ios/571800810/technology' \
+  --header "Authorization: Bearer $PEEKPANDA_TOKEN" > tech.json</pre>
+<p>Identifiers in the answer that are not readable names (keys, IDs, URLs) are counted but never printed here.</p>
+<footer>Part of a set of small PeekPanda API samples. Source and command-line version: <a href="https://github.com/fdarkaou/app-tech-stack-watch">github.com/fdarkaou/app-tech-stack-watch</a> (MIT). Example data is made up.</footer>
+
+<script type="module">
+import { techReport, buildReport, diff, toMarkdown, toCsv, label } from './tech.js';
+const $ = (id) => document.getElementById(id);
+const esc = (s) => String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+let current = null;
+const parseRun = (text) => {
+  const j = JSON.parse(text);
+  const arr = Array.isArray(j) ? j : j.raws ?? [j];
+  return buildReport(arr.map((x) => techReport(x.raw ?? x, x.label ?? null)));
+};
+function render(rep, changes) {
+  let h = '';
+  if (changes) h += `<h2>Changes since the earlier run</h2><ul>${(changes.length ? changes : ['nothing changed in the stored evidence']).map((l) => `<li>${esc(l)}</li>`).join('')}</ul>`;
+  for (const a of rep.apps) {
+    h += `<h2>${esc(a.name ? `${a.name} (${a.storeId})` : a.storeId)}</h2>`;
+    if (a.status !== 'observed') { h += '<p class="muted">Technology evidence is not collected for this app yet.</p>'; continue; }
+    h += `<p class="muted">SDK evidence ${esc(a.sdk.status)}${a.sdk.collectedAt ? ' on ' + esc(a.sdk.collectedAt) : ''}; chart evidence ${esc(a.ranks.status)}${a.ranks.collectedAt ? ' on ' + esc(a.ranks.collectedAt) : ''}.</p>`;
+    h += '<table><tr><th>Category</th><th>SDK evidence found</th><th>Unnamed identifiers</th></tr>' + a.sdk.categories.map((c) => `<tr><td>${esc(label(c.category))}</td><td>${esc(c.names.join(', ') || '–')}</td><td>${c.unlabelled || '–'}</td></tr>`).join('') + '</table>';
+    h += `<p>SKAdNetwork IDs: ${a.sdk.skAdNetworkIds ?? 'n/a'} · URL schemes checked (appQueries): ${a.sdk.appQueries ?? 'n/a'} · permissions listed: ${a.sdk.permissions.length}</p>`;
+    if (a.ranks.best) h += `<p>Best chart position in ${a.ranks.windowDays ?? 90} days: <b>#${a.ranks.best.bestRank}</b> (${esc(a.ranks.best.collection)}, ${esc(a.ranks.best.country)}); ${a.ranks.records} records, ${a.ranks.countries} countries.</p>`;
+  }
+  $('out').innerHTML = h;
+}
+$('go').onclick = () => {
+  $('err').textContent = '';
+  try {
+    const rep = parseRun($('raw').value);
+    const changes = $('prev').value.trim() ? diff(parseRun($('prev').value), rep) : null;
+    current = rep; render(rep, changes); $('csv').disabled = false;
+  } catch (e) { $('err').textContent = e.message; $('csv').disabled = true; }
+};
+$('ex').onclick = async () => {
+  $('raw').value = await (await fetch('examples/run.json')).text();
+  $('prev').value = await (await fetch('examples/previous-run.json')).text();
+  $('go').click();
+};
+$('csv').onclick = () => {
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([toCsv(current)], { type: 'text/csv' }));
+  a.download = 'tech-stack.csv'; a.click();
+};
+</script>
+</body>
+</html>

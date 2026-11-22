@@ -1,0 +1,79 @@
+[
+  {
+    "label": "Example Sleep Coach",
+    "raw": {
+      "storeId": "1000000001",
+      "status": "observed",
+      "collectedAt": "2026-10-20T06:00:00.000Z",
+      "sdk": {
+        "status": "observed",
+        "collectedAt": "2026-10-20T05:45:00.000Z",
+        "sdkCategories": [
+          {
+            "category": "product-analytics",
+            "sdkPrefixes": [
+              "FirebaseAnalytics.framework",
+              "Amplitude.framework"
+            ]
+          },
+          {
+            "category": "ad-attribution",
+            "sdkPrefixes": [
+              "AppsFlyerLib.framework",
+              "#"
+            ]
+          }
+        ],
+        "permissions": [],
+        "appQueries": [
+          "#",
+          "#",
+          "#"
+        ],
+        "skAdNetworkIds": [
+          "#",
+          "#"
+        ],
+        "hasUnclassifiedEvidence": true
+      },
+      "bestRanks": {
+        "status": "observed",
+        "collectedAt": "2026-10-20T06:00:00.000Z",
+        "windowDays": 90,
+        "records": [
+          {
+            "country": "US",
+            "collection": "TOP_FREE_IOS",
+            "category": "HEALTH_AND_FITNESS",
+            "bestRank": 14
+          },
+          {
+            "country": "GB",
+            "collection": "TOP_FREE_IOS",
+            "category": "HEALTH_AND_FITNESS",
+            "bestRank": 22
+          },
+          {
+            "country": "US",
+            "collection": "TOP_GROSSING_IOS",
+            "category": "HEALTH_AND_FITNESS",
+            "bestRank": 31
+          }
+        ]
+      }
+    }
+  },
+  {
+    "label": "Example Budget",
+    "raw": {
+      "storeId": "1000000004",
+      "status": "not_collected",
+      "sdk": {
+        "status": "not_collected"
+      },
+      "bestRanks": {
+        "status": "not_collected"
+      }
+    }
+  }
+]
