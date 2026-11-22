@@ -1,0 +1,137 @@
+[
+  {
+    "label": "Example Sleep Coach",
+    "raw": {
+      "storeId": "1000000001",
+      "status": "observed",
+      "collectedAt": "2026-11-18T06:00:00.000Z",
+      "sdk": {
+        "status": "observed",
+        "collectedAt": "2026-11-18T05:45:00.000Z",
+        "sdkCategories": [
+          {
+            "category": "product-analytics",
+            "sdkPrefixes": [
+              "FirebaseAnalytics.framework",
+              "Amplitude.framework",
+              "Mixpanel.framework"
+            ]
+          },
+          {
+            "category": "ad-attribution",
+            "sdkPrefixes": [
+              "AppsFlyerLib.framework",
+              "#"
+            ]
+          },
+          {
+            "category": "business-tools",
+            "sdkPrefixes": [
+              "RevenueCat.bundle"
+            ]
+          }
+        ],
+        "permissions": [],
+        "appQueries": [
+          "#",
+          "#",
+          "#"
+        ],
+        "skAdNetworkIds": [
+          "#",
+          "#",
+          "#"
+        ],
+        "hasUnclassifiedEvidence": true
+      },
+      "bestRanks": {
+        "status": "observed",
+        "collectedAt": "2026-11-18T06:00:00.000Z",
+        "windowDays": 90,
+        "records": [
+          {
+            "country": "US",
+            "collection": "TOP_FREE_IOS",
+            "category": "HEALTH_AND_FITNESS",
+            "bestRank": 9
+          },
+          {
+            "country": "GB",
+            "collection": "TOP_FREE_IOS",
+            "category": "HEALTH_AND_FITNESS",
+            "bestRank": 22
+          },
+          {
+            "country": "US",
+            "collection": "TOP_GROSSING_IOS",
+            "category": "HEALTH_AND_FITNESS",
+            "bestRank": 31
+          },
+          {
+            "country": "DE",
+            "collection": "TOP_FREE_IPAD",
+            "category": "HEALTH_AND_FITNESS",
+            "bestRank": 5
+          }
+        ]
+      }
+    }
+  },
+  {
+    "label": "Example Budget",
+    "raw": {
+      "storeId": "1000000004",
+      "status": "observed",
+      "collectedAt": "2026-11-17T06:00:00.000Z",
+      "sdk": {
+        "status": "observed",
+        "collectedAt": "2026-11-17T05:45:00.000Z",
+        "sdkCategories": [
+          {
+            "category": "ad-networks",
+            "sdkPrefixes": [
+              "#",
+              "#"
+            ]
+          },
+          {
+            "category": "development-tools",
+            "sdkPrefixes": [
+              "Sentry.framework",
+              "Lottie.bundle"
+            ]
+          }
+        ],
+        "permissions": [],
+        "appQueries": [
+          "#",
+          "#",
+          "#"
+        ],
+        "skAdNetworkIds": [
+          "#"
+        ],
+        "hasUnclassifiedEvidence": true
+      },
+      "bestRanks": {
+        "status": "observed",
+        "collectedAt": "2026-11-17T06:00:00.000Z",
+        "windowDays": 90,
+        "records": [
+          {
+            "country": "US",
+            "collection": "TOP_GROSSING_IOS",
+            "category": "HEALTH_AND_FITNESS",
+            "bestRank": 12
+          },
+          {
+            "country": "CA",
+            "collection": "TOP_GROSSING_IOS",
+            "category": "HEALTH_AND_FITNESS",
+            "bestRank": 18
+          }
+        ]
+      }
+    }
+  }
+]

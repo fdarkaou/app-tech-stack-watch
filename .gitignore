@@ -1,4 +1,4 @@
 node_modules
 *.state.json
 tech-state.json
-run.json
+/run.json
